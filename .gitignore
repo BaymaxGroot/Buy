@@ -1,0 +1,6 @@
+# ide
+.idea/
+.vscode/
+
+# maotai project ignore
+/maotai/config/config.yml
