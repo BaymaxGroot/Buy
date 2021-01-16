@@ -1,0 +1,58 @@
+# mandatory
+# order needed
+# refer -
+EID:
+FP:
+
+# 支付密码
+# 如果你的账户中有可用的京券（注意不是东券）或 在上次购买订单中使用了京豆，
+# 那么京东可能会在下单时自动选择京券支付 或 自动勾选京豆支付。
+# 此时下单会要求输入六位数字的支付密码。请在下方配置你的支付密码，如 123456 。
+# 如果没有上述情况，下方请留空。
+PAYMENT_PWD:
+
+# product id
+# 茅台 sku - 100012043978
+SKU_ID: 100012043978
+
+# format HH:MM:SS.sss - 时：分：秒：毫秒
+BUY_TIME: 09:59:59.500
+
+# JD API / Uri
+# retrieve jd's server time
+JD_TIME_API: https://a.jd.com//ajax/queryServerData.html
+# user order list page
+USER_ORDER_LIST: https://order.jd.com/center/list.action
+# user login page
+USER_LOGIN_PAGE: https://passport.jd.com/new/login.aspx
+# QR image
+QR_IMAGE_SHOW: https://qr.m.jd.com/show
+QR_IMAGE_SHOW_REFER: https://passport.jd.com/new/login.aspx
+# QR Ticket
+QR_TICKET: https://qr.m.jd.com/check
+QR_TICKET_REFER: https://passport.jd.com/new/login.aspx
+QR_TICKET_VALIDATE: https://passport.jd.com/uc/qrCodeTicketValidation
+QR_TICKET_VALIDATE_REFER: https://passport.jd.com/uc/login?ltype=logout
+
+# Product
+PRODUCT_INFO: https://item.jd.com/{}.html
+YUSHOW: https://yushou.jd.com/youshouinfo.action?
+YUSHOW_REFER: https://item.jd.com/{}.html
+
+# User
+USER_INFO: https://passport.jd.com/user/petName/getUserInfoForMiniJd.action
+USER_INFO_REFER: https://order.jd.com/center/list.action
+
+# 抢购链接
+GET_SECKILL_LINK: https://itemko.jd.com/itemShowBtn
+GET_SECKILL_LINK_REFER: https://item.jd.com/{}.html
+
+REQUEST_SECKILL_REFER: https://item.jd.com/{}.html
+
+REQUEST_SECKILL_CHECKOUT: https://marathon.jd.com/seckill/seckill.action
+REQUEST_SECKILL_CHECKOUT_REFER: https://item.jd.com/{}.html
+
+SECKILL_INIT: https://marathon.jd.com/seckillnew/orderService/pc/init.action
+
+
+
