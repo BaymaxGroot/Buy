@@ -4,3 +4,6 @@
 
 # maotai project ignore
 /maotai/config/config.yml
+/maotai/qr_code.png
+/maotai/running.log
+/maotai/cookies/
