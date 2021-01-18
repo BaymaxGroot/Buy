@@ -11,13 +11,14 @@ if __name__ == '__main__':
      2. 抢购茅台
     """
     print(a)
-    seckill = Seckill()
     choice = input('请选择: ')
 
+    seckill = Seckill()
     if choice == '1':
         seckill.order()
     elif choice == '2':
-        seckill.buy_by_multi_process()
+        # seckill.buy_by_multi_process()
+        seckill.buy()
     else:
         logger.info('目前没有提供此功能...')
         sys.exit(1)

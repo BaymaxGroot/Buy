@@ -23,8 +23,8 @@ BUY_TIME: 09:59:59.500
 JD_TIME_API: https://a.jd.com//ajax/queryServerData.html
 # user order list page
 USER_ORDER_LIST: https://order.jd.com/center/list.action
-# user login page
-USER_LOGIN_PAGE: https://passport.jd.com/new/login.aspx
+## user login page
+#USER_LOGIN_PAGE: https://passport.jd.com/new/login.aspx
 # QR image
 QR_IMAGE_SHOW: https://qr.m.jd.com/show
 QR_IMAGE_SHOW_REFER: https://passport.jd.com/new/login.aspx
@@ -35,9 +35,9 @@ QR_TICKET_VALIDATE: https://passport.jd.com/uc/qrCodeTicketValidation
 QR_TICKET_VALIDATE_REFER: https://passport.jd.com/uc/login?ltype=logout
 
 # Product
-PRODUCT_INFO: https://item.jd.com/{}.html
+PRODUCT_INFO: https://item.jd.com/{0}.html
 YUSHOW: https://yushou.jd.com/youshouinfo.action?
-YUSHOW_REFER: https://item.jd.com/{}.html
+YUSHOW_REFER: https://item.jd.com/{0}.html
 
 # User
 USER_INFO: https://passport.jd.com/user/petName/getUserInfoForMiniJd.action
@@ -45,14 +45,15 @@ USER_INFO_REFER: https://order.jd.com/center/list.action
 
 # 抢购链接
 GET_SECKILL_LINK: https://itemko.jd.com/itemShowBtn
-GET_SECKILL_LINK_REFER: https://item.jd.com/{}.html
+GET_SECKILL_LINK_REFER: https://item.jd.com/{0}.html
 
-REQUEST_SECKILL_REFER: https://item.jd.com/{}.html
+REQUEST_SECKILL_REFER: https://item.jd.com/{0}.html
 
 REQUEST_SECKILL_CHECKOUT: https://marathon.jd.com/seckill/seckill.action
-REQUEST_SECKILL_CHECKOUT_REFER: https://item.jd.com/{}.html
+REQUEST_SECKILL_CHECKOUT_REFER: https://item.jd.com/{0}.html
 
 SECKILL_INIT: https://marathon.jd.com/seckillnew/orderService/pc/init.action
 
-
+SUBMIT_ORDER: https://marathon.jd.com/seckillnew/orderService/pc/submitOrder.action
+SUBMIT_ORDER_REFER: https://marathon.jd.com/seckill/seckill.action?skuId={0}&num={1}&rid={2}
 
