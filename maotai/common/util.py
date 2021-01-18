@@ -651,7 +651,7 @@ USER_AGENTS = [
 
 def get_useragent():
     """
-    get random useragent
+    得到随机的 user agent
     :return:
     """
     return random.choice(USER_AGENTS)
@@ -659,7 +659,7 @@ def get_useragent():
 
 def wait_time():
     """
-    wait random time
+    随即等待时间
     :return:
     """
     time.sleep(random.randint(100, 200) / 1000)

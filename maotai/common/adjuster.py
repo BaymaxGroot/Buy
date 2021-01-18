@@ -10,7 +10,7 @@ from maotai.logger.logutil import logger
 
 class Adjuster(object):
     def __init__(self, sleep_interval=0.5):
-        # buy_time format 09:59:59.500
+        # 抢购时间 09:59:59.500
         buy_time_everyday = env_params.get('BUY_TIME').__str__()
         localtime = time.localtime(time.time())
         self.buy_time = datetime.strptime(
@@ -23,7 +23,7 @@ class Adjuster(object):
     @staticmethod
     def jd_time():
         """
-        Get JD's server timestamp
+        得到京东服务器的时间戳
         :return:
         """
         url = env_params.get('JD_TIME_API')
@@ -32,29 +32,29 @@ class Adjuster(object):
             resp = json.load(res.text)
             return int(resp['serverTime'] + res.elapsed.microseconds / 2)
         except Exception as e:
-            logger.error(f"""Failed to retrieve JD's server timestamp. Error - {str(e)}.""")
+            logger.error(f"""获取京东服务器时间戳失败. Error - {str(e)}.""")
             raise
 
     @staticmethod
     def local_time():
         """
-        Get local timestamp
+        得到本地时间戳
         :return:
         """
         return int(round(time.time() * 1000))
 
     def local_jd_time_diff(self):
         """
-        Calculate the time difference between ' local - jd '
+        计算本地时间戳 与 京东服务器时间戳之间的差值 即时延 ' local - jd '
         :return:
         """
         return self.local_time() - self.jd_time()
 
     def start(self):
-        logger.info(f"""Waiting for time: {self.buy_time}, detected time diff - {self.local_jd_time_diff()} ms""")
+        logger.info(f"""等待到达抢购时间: {self.buy_time}, 检测到本地与京东服务器时间差为 - {self.local_jd_time_diff()} ms""")
         while True:
             if self.local_time() - self.local_jd_time_diff() >= self.buy_time_ms:
-                logger.info('Time of arrival, start execute...')
+                logger.info('抢购时间到达, 开始执行...')
                 break
             else:
                 time.sleep(self.sleep_interval)

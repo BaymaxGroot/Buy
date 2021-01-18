@@ -7,7 +7,7 @@ import functools
 
 from lxml import etree
 import requests
-from timer import Timer
+# import timer
 from concurrent.futures import ProcessPoolExecutor
 
 from maotai.common.util import get_useragent, parse_json, wait_time
@@ -21,7 +21,7 @@ QR_FILE = 'qr_code.png'
 
 class SessionUtil(object):
     """
-    Session util
+    Session 工具库
     """
 
     def __init__(self):
@@ -49,14 +49,14 @@ class SessionUtil(object):
 
     def get_session(self):
         """
-        Retrieve current session
+        返回当前session
         :return:
         """
         return self.session
 
     def get_cookies(self):
         """
-        Retrieve current cookie
+        返回当前用户的cookies
         :return:
         """
         return self.get_session().cookies
@@ -66,7 +66,7 @@ class SessionUtil(object):
 
     def load_cookies_from_local(self):
         """
-        Load cookies from local file
+        从本地文件加载用户cookies
         :return:
         """
         cookies_file = ''
@@ -84,7 +84,7 @@ class SessionUtil(object):
 
     def save_cookies_to_local(self, cookie_file_name):
         """
-        Save cookies to local files
+        将cookies保持到本地文件
         :return:
         """
         cookies_file = f"""{self.cookies_folder}{cookie_file_name}.cookies"""
@@ -97,7 +97,7 @@ class SessionUtil(object):
 
 class QRLogin(object):
     """
-    QR login util
+    二维码登录相关操作
     """
     def __init__(self, session_util: SessionUtil):
         self.qrcode_image_file = QR_FILE
@@ -109,26 +109,26 @@ class QRLogin(object):
 
     def refresh_login_status(self):
         """
-        Refresh login status
+        刷新登录状态
         :return:
         """
         self.is_login = self._verify_cookies()
 
     def _verify_cookies(self):
         """
-        Verify cookies are valid
+        验证cookies是否有效
         Make request to user order list page. https://order.jd.com/center/list.action
         :return:
         """
         payload = {
-            'rid': str(int(time.time) * 1000)
+            'rid': str(int(time.time()) * 1000)
         }
         try:
             resp = self.session.get(url=env_params.get('USER_ORDER_LIST'), params=payload, allow_redirects=False)
             if resp.status_code == requests.codes.OK:
                 return True
         except Exception as e:
-            logger.error(f"""Verify cookies error. Error - {str(e)}""")
+            logger.error(f"""验证cookies失败. Error - {str(e)}""")
         return False
 
     def _get_login_page(self):
@@ -141,7 +141,7 @@ class QRLogin(object):
 
     def _get_qrcode(self):
         """
-        Retrieve QR image & display
+        检索会登录所需二维码 并 展示
         :return:
         """
         payload = {
@@ -156,14 +156,14 @@ class QRLogin(object):
         resp = self.session.get(url=env_params.get('QR_IMAGE_SHOW'), headers=headers, params=payload)
 
         if not (resp.status_code == requests.codes.OK):
-            logger.error('Retrieve QR image error.')
+            logger.error('检索二维码失败.')
             return False
 
         with open(self.qrcode_image_file, 'wb') as f:
             for chunk in resp.iter_content(chunk_size=1024):
                 f.write(chunk)
 
-        logger.log('Retrieve QR image success. Please Open App to scan...')
+        logger.info('检索二维码成功. 请打开APP扫描登陆...')
 
         if os.name == "nt":
             os.system('start ' + self.qrcode_image_file)  # for Windows
@@ -179,7 +179,7 @@ class QRLogin(object):
 
     def _get_qrcode_ticket(self):
         """
-        Retrieve ticket
+        检索二维码登陆后的 ticket
         :return:
         """
         payload = {
@@ -195,7 +195,7 @@ class QRLogin(object):
         resp = self.session.get(url=env_params.get('QR_TICKET'), headers=headers, params=payload)
 
         if not (resp.status_code == requests.codes.OK):
-            logger.error('Retrieve QR image scan status error.')
+            logger.error('检索二维码登陆状态失败.')
             return False
 
         resp_json = parse_json(resp.text)
@@ -203,12 +203,12 @@ class QRLogin(object):
             logger.info('Code: %s, Message: %s', resp_json['code'], resp_json['msg'])
             return False
         else:
-            logger.info('Mobile client confirmation has been completed.')
+            logger.info('二维码登陆成功.')
             return resp_json['ticket']
 
     def _verify_qr_ticket(self, ticket):
         """
-        Use the ticket to do check with jd server
+        验证二维码登陆成功之后的 ticket
         :param ticket:
         :return:
         """
@@ -221,7 +221,7 @@ class QRLogin(object):
         }
         resp = self.session.get(url=env_params.get('QR_TICKET_VALIDATE'), headers=headers, params=payload)
         if not (resp.status_code == requests.codes.OK):
-            logger.error('Verify QR scan ticket error.')
+            logger.error('验证二维码登录之后的ticket成功.')
             return False
         resp_json = json.loads(resp.text)
         if resp_json['returnCode'] == 0:
@@ -232,14 +232,14 @@ class QRLogin(object):
 
     def login_by_qr(self):
         """
-        Do QR login
+        二维码登录
         :return:
         """
         self._get_login_page()
 
         # Get QR code image
         if not self._get_qrcode():
-            raise SKException('QR image download error.')
+            raise SKException('二维码下载失败.')
 
         # Get QR code's ticket
         ticket = None
@@ -251,14 +251,14 @@ class QRLogin(object):
             time.sleep(4)
 
         if not ticket:
-            raise SKException('The QR code has expired, please scan it again')
+            raise SKException('二维码登陆超时，请重新扫描登陆...')
 
         # Verify QR code's ticket
         if not self._verify_qr_ticket(ticket):
-            raise SKException('QR code verify failed...')
+            raise SKException('二维码登陆失败...')
 
         self.refresh_login_status()
-        logger.info('QR code login successful!!!')
+        logger.info('二维码登录成功!!!')
 
 
 class Seckill(object):
@@ -272,7 +272,7 @@ class Seckill(object):
         self.seckill_init_info = dict()
         self.seckill_url = dict()
         self.seckill_order_data = dict()
-        self.timers = Timer()
+        # self.timers = timer.timer
 
         self.session = self.session_util.get_session()
         self.user_agent = self.session_util.get_user_agent()
@@ -280,11 +280,11 @@ class Seckill(object):
 
     def login_by_qrcode(self):
         """
-        QR code login
+        扫描二维码登录
         :return:
         """
         if self.qr_login.is_login:
-            logger.info('Login successful!!!')
+            logger.info('登陆成功!!!')
             return
 
         self.qr_login.login_by_qr()
@@ -293,7 +293,7 @@ class Seckill(object):
             self.nick_name = self.get_username()
             self.session_util.save_cookies_to_local(self.nick_name)
         else:
-            raise SKException('QR code login failed...')
+            raise SKException('二维码登陆失败...')
 
     def check_login(func):
         """
@@ -302,8 +302,8 @@ class Seckill(object):
         """
         @functools.wraps(func)
         def new_func(self, *args, **kwargs):
-            if not self.qrlogin.is_login:
-                logger.info(f"""{func.__name__} need login before call, start QR code login...""")
+            if not self.qr_login.is_login:
+                logger.info(f"""{func.__name__} 在调用前需要登陆, 请开始扫描二维码登录...""")
                 self.login_by_qrcode()
             return func(self, *args, **kwargs)
         return new_func
@@ -311,7 +311,7 @@ class Seckill(object):
     @check_login
     def order(self):
         """
-        Order
+        预约
         :return:
         """
         self._order()
@@ -319,14 +319,14 @@ class Seckill(object):
     @check_login
     def buy(self):
         """
-        Buy
+        抢购
         :return:
         """
         self._buy()
 
     def buy_by_multi_process(self, work_count=5):
         """
-        Multi process to seckill
+        多进程完成抢购
         :param work_count:
         :return:
         """
@@ -336,7 +336,7 @@ class Seckill(object):
 
     def _order(self):
         """
-        Order
+        预约
         :return:
         """
         while True:
@@ -344,12 +344,12 @@ class Seckill(object):
                 self.make_order()
                 break
             except Exception as e:
-                logger.error(f"""Order occur error. Error - {str(e)}""")
+                logger.error(f"""预约失败. Error - {str(e)}""")
             wait_time()
 
     def _buy(self):
         """
-        Buy
+        抢购
         :return:
         """
         while True:
@@ -359,12 +359,12 @@ class Seckill(object):
                     self.request_seckill_checkout_page()
                     self.submit_seckill_order()
             except Exception as e:
-                logger.error(f"""Buy occur error. Error - {str(e)}""")
+                logger.error(f"""抢购失败. Error - {str(e)}""")
             wait_time()
 
     def make_order(self):
         """
-        Product Order
+        预约商品
         :return:
         """
         logger.info(f"""商品名称: {self.get_sku_title()}""")
@@ -381,7 +381,7 @@ class Seckill(object):
         resp = self.session.get(url=url, params=payload, headers=headers)
         resp_json = parse_json(resp.text)
         reserve_url = resp_json.get('url')
-        self.timers.start()
+
         while True:
             try:
                 self.session.get(url='https:' + reserve_url)
@@ -389,13 +389,13 @@ class Seckill(object):
                 # if global_config.getRaw('messenger', 'enable') == 'true':
                 #     success_message = "预约成功，已获得抢购资格 / 您已成功预约过了，无需重复预约"
                 #     send_wechat(success_message)
-                # break
+                break
             except Exception as e:
                 logger.error(f"""预约失败正在重试... {str(e)}""")
 
     def get_username(self):
         """
-        Retrieve user info
+        检索登陆用户信息
         :return:
         """
         url = env_params.get('USER_INFO')
@@ -422,7 +422,7 @@ class Seckill(object):
 
     def get_sku_title(self):
         """
-        Retrieve Product title
+        检索抢购商品的title
         :return:
         """
         url = env_params.get('PRODUCT_INFO').__str__().format(self.sku_id)
@@ -464,10 +464,10 @@ class Seckill(object):
                 wait_time()
 
     def request_seckill_url(self):
-        """访问商品的抢购链接（用于设置cookie等"""
+        """访问商品的抢购链接 用于设置cookie等"""
         logger.info(f"""用户: {self.get_username()}""")
         logger.info(f"""商品名称: {self.get_sku_title()}""")
-        self.timers.start()
+        # self.timers.start()
         self.seckill_url[self.sku_id] = self.get_seckill_url()
         logger.info('访问商品的抢购连接...')
         headers = {

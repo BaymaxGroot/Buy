@@ -7,7 +7,7 @@ config_params = {}
 
 def init_config_params(file):
     """
-    Init running environment needed params
+    从配置文件初始化系统运行配置参数
     :param file: config file name
     :return: config obj
     """
@@ -15,7 +15,7 @@ def init_config_params(file):
     if config_params:
         return config_params
     try:
-        with open(file, 'r') as stream:
+        with open(file, 'r', encoding='utf-8') as stream:
             config_params = yaml.load(stream, Loader=yaml.FullLoader)
         return config_params
     except Exception as e:
